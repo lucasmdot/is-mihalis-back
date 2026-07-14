@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f0e6" />
+    <link rel="icon" href="flag.webp" type="image/webp" />
+    <meta
+      name="description"
+      content="The definitive answer to whether Mihalis is back yet."
+    />
+    <title>Is Mihalis back yet?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #172a3a;
+        --blue: #205b8e;
+        --blue-deep: #123b61;
+        --paper: #f4f0e6;
+        --gold: #c89d4b;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        align-items: center;
+        background: var(--paper);
+        color: var(--ink);
+        display: flex;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        justify-content: center;
+        margin: 0;
+        min-height: 100svh;
+        overflow: hidden;
+      }
+
+      body::before,
+      body::after {
+        border: 1px solid rgba(32, 91, 142, 0.12);
+        border-radius: 50%;
+        content: "";
+        height: min(75vw, 920px);
+        pointer-events: none;
+        position: fixed;
+        width: min(75vw, 920px);
+      }
+
+      body::before { transform: translate(-45%, -52%); }
+      body::after { transform: translate(58%, 48%); }
+
+      body.returned {
+        background:
+          radial-gradient(circle at 50% 40%, #fff9df 0, #f4df98 35%, #c69135 100%);
+        color: #51350f;
+      }
+
+      body.returned::before,
+      body.returned::after {
+        border-color: rgba(113, 73, 12, 0.28);
+      }
+
+      main {
+        max-width: 900px;
+        padding: 32px 24px;
+        position: relative;
+        text-align: center;
+        width: 100%;
+        z-index: 1;
+      }
+
+      h1 {
+        font-size: clamp(3.35rem, 9vw, 7.3rem);
+        font-weight: 700;
+        letter-spacing: -0.065em;
+        line-height: 0.8;
+        margin: 0;
+      }
+
+      .name {
+        color: var(--blue);
+        font-style: italic;
+      }
+
+      .answer {
+        color: var(--blue);
+        font-size: clamp(5.2rem, 17vw, 12.5rem);
+        font-weight: 700;
+        letter-spacing: -0.075em;
+        line-height: 0.83;
+        margin: 42px 0 0;
+      }
+
+      .countdown-wrap {
+        border-top: 1px solid rgba(23, 42, 58, 0.22);
+        margin: 38px auto 0;
+        max-width: 460px;
+        padding-top: 19px;
+      }
+
+      .countdown-label {
+        color: rgba(23, 42, 58, 0.76);
+        font-family: "DM Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.13em;
+        margin: 0 0 10px;
+        text-transform: uppercase;
+      }
+
+      .countdown {
+        color: var(--blue-deep);
+        font-family: "DM Mono", monospace;
+        font-size: clamp(1.2rem, 3.5vw, 1.75rem);
+        letter-spacing: 0.06em;
+        margin: 0;
+      }
+
+      .date {
+        color: rgba(23, 42, 58, 0.65);
+        font-size: 1.05rem;
+        font-style: italic;
+        margin: 13px 0 0;
+      }
+
+      .arrival-kicker {
+        color: #76500f;
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        margin: 0 0 22px;
+        text-transform: uppercase;
+      }
+
+      .arrival-title {
+        color: #51350f;
+        font-size: clamp(4.3rem, 13vw, 10rem);
+        line-height: 0.75;
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .arrival-title em {
+        color: #8b5b12;
+        font-weight: 600;
+      }
+
+      .arrival-mark {
+        color: #76500f;
+        font-size: clamp(1.8rem, 4vw, 2.75rem);
+        letter-spacing: 0.38em;
+        margin: 38px 0 0;
+      }
+
+      @media (max-width: 480px) {
+        h1 { line-height: 0.85; }
+        .answer { margin-top: 34px; }
+        .countdown-wrap { margin-top: 34px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Is <span class="name">Mihalis</span> back yet?</h1>
+      <p class="answer" id="answer" aria-live="polite">NO</p>
+      <section class="countdown-wrap" id="countdown-wrap" aria-live="polite">
+        <p class="countdown-label">Time remaining</p>
+        <p class="countdown" id="countdown">00d 00h 00m 00s</p>
+        <p class="date">He returns August 10, 2026</p>
+      </section>
+    </main>
+
+    <script>
+      // August 10, 2026 at midnight in New York (EDT, UTC−04:00).
+      const returnTime = new Date("2026-08-10T00:00:00-04:00").getTime();
+      const answer = document.getElementById("answer");
+      const countdown = document.getElementById("countdown");
+      const countdownWrap = document.getElementById("countdown-wrap");
+      const main = document.querySelector("main");
+      let countdownInterval;
+
+      function showReturned() {
+        document.body.classList.add("returned");
+        document.title = "Mihalis has returned";
+        main.innerHTML = `
+          <p class="arrival-kicker">He is back</p>
+          <h1 class="arrival-title">Mihalis<br /><em>has returned.</em></h1>
+          <p class="arrival-mark" aria-hidden="true">✦ ✦ ✦</p>
+        `;
+        window.clearInterval(countdownInterval);
+      }
+
+      function updateStatus() {
+        const remaining = returnTime - Date.now();
+
+        if (remaining <= 0) {
+          showReturned();
+          return;
+        }
+
+        const seconds = Math.floor(remaining / 1000);
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        const pad = (number) => String(number).padStart(2, "0");
+
+        countdown.textContent = `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(secs)}s`;
+      }
+
+      updateStatus();
+      countdownInterval = window.setInterval(updateStatus, 1000);
+    </script>
+  </body>
+</html>
